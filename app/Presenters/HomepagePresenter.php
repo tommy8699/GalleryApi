@@ -10,7 +10,6 @@ use Nette;
 final class HomepagePresenter extends Nette\Application\UI\Presenter
 {
 
-    public static function actionGallery(){
-
+    public static function actionDefault(){
     }
 }

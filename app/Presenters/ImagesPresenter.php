@@ -13,27 +13,24 @@ use Nette\Utils\Image;
 final class ImagesPresenter extends Nette\Application\UI\Presenter
 {
 
-
-    public function renderDefault($width, $height ,$fullPath){
+    public function actionDefault($width, $height ,$fullPath){
 
         $dir = dirname(__DIR__ ,2);
         $pathAllGallery = '/AllGalleries';
-        $galleryFile = $dir.'/www/AllGalleries'; // tu bude cesta k vsetkym galleriam
+        $galleryFile = $dir.'/www/AllGalleries';
         $findGallery = $galleryFile."/".$fullPath;
         $thisGallery= FileSystem::read($findGallery);
-        $image = Image::fromFile($thisGallery);
-
+        $image = Image::fromFile($galleryFile);
         $image->resize($width, $height);
 
-        if ($httpRequest->isMethod('GET')){
+        if ($this->getHttpRequest()->isMethod('GET')){
 
                 $data = [
                     'fullPath' => $pathAllGallery."/".$fullPath,
-                    'width' => $width,
-                    'height' => $height
+                    'width' => $image->getWidth(),
+                    'height' => $image->getHeight()
                 ];
                 $this->sendJson($data);
         }
-
         }
 }

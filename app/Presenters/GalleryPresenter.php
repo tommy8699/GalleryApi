@@ -7,7 +7,6 @@ namespace App\Presenters;
 use Nette;
 use Nette\Utils\FileSystem;
 use Nette\Utils\Strings;
-use Nette\Http\IRequest;
 use function App\dd;
 use Nette\Utils\Image;
 
@@ -16,14 +15,13 @@ use Nette\Utils\Image;
 final class GalleryPresenter extends Nette\Application\UI\Presenter
 {
 
-
-    public function renderDefault( $path = false): void
+    public function actionDefault($path): void
     {
         $dir = dirname(__DIR__ ,2);
-        $galleryFile = $dir.'/www/AllGalleries'; // tu bude cesta k vsetkym galleriam
+        $galleryFile = $dir.'/www/AllGalleries';
         $pathAllGallery = '/AllGalleries';
 
-        if ($httpRequest->isMethod('GET')){
+        if ($this->getHttpRequest()->isMethod('GET')){
             $galleries = FileSystem::read($galleryFile);
            // dd($galleries);
             foreach ($galleries as $gallery){
@@ -36,23 +34,23 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
 
         }
 
-        elseif ($httpRequest->isMethod('POST')){
+        elseif ($this->getHttpRequest()->isMethod('POST')){
 
             $data = [
-                'path' => $path,
+                'path' => Strings::firstUpper($path),
                 'name' => Strings::firstUpper($path)
             ];
 
-            FileSystem::write($galleryFile, $data["path"], 0666);
+            //FileSystem::write($galleryFile, $data["path"], 0666);
+            FileSystem::createDir($path,0777);
             $this->sendJson($data);
         }
 
 
         if ($path){
 
-        if($httpRequest->isMethod('GET')){
+        if($this->getHttpRequest()->isMethod('GET')){
             $gallery =FileSystem::read($galleryFile."/".$path);
-            //dd($gallery);
             $data = [
                 "path" => $gallery["path"],
                 "fullpath" => $gallery["fullpath"],
@@ -62,7 +60,7 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
             $this->sendJson($data);
         }
 
-        elseif ($httpRequest->isMethod('POST')){
+        elseif ($this->getHttpRequest()->isMethod('POST')){
 
             if (file_exists($path)){
                 echo "Subor uz existuje";
@@ -81,7 +79,7 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
             $this->sendJson($data);
         }
 
-        elseif ($httpRequest->isMethod('DELETE') ){
+        elseif ($this->getHttpRequest()->isMethod('DELETE') ){
 
             if (file_exists($path)){
                 FileSystem::delete($path);
