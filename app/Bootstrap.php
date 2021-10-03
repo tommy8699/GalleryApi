@@ -11,6 +11,12 @@ class Bootstrap
 {
 	public static function boot(): Configurator
 	{
+	    // Dump function
+	    function dd($var){
+	        dump($var);
+	        die(1);
+        }
+
 		$configurator = new Configurator;
 		$appDir = dirname(__DIR__);
 

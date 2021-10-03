@@ -27,12 +27,12 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => '1.0.0+no-version-set',
-    'version' => '1.0.0.0',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
+    'reference' => 'fef53be9795453ef433388921cf8c79fc8b8a75f',
     'name' => 'nette/web-project',
   ),
   'versions' => 
@@ -120,12 +120,12 @@ private static $installed = array (
     ),
     'nette/http' => 
     array (
-      'pretty_version' => 'v3.1.2',
-      'version' => '3.1.2.0',
+      'pretty_version' => 'v3.1.3',
+      'version' => '3.1.3.0',
       'aliases' => 
       array (
       ),
-      'reference' => '5777e50f69566732579bf381d2cbcb2f2695d015',
+      'reference' => '999f54884deed7a419b13552271c7059a5acb428',
     ),
     'nette/mail' => 
     array (
@@ -210,12 +210,12 @@ private static $installed = array (
     ),
     'nette/web-project' => 
     array (
-      'pretty_version' => '1.0.0+no-version-set',
-      'version' => '1.0.0.0',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => 'fef53be9795453ef433388921cf8c79fc8b8a75f',
     ),
     'symfony/thanks' => 
     array (
