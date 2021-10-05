@@ -18,17 +18,16 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
     public function actionDefault($path): void
     {
         $dir = dirname(__DIR__ ,2);
-        $galleryFile = $dir.'/www/AllGalleries';
-        $pathAllGallery = '/AllGalleries';
-
+        $galleryFile = $dir.'/www/AllGalleries'; //Cesta k vsetkym galleriam
         if ($this->getHttpRequest()->isMethod('GET')){
             $galleries = FileSystem::read($galleryFile);
-           // dd($galleries);
-            foreach ($galleries as $gallery){
-            $data = [
-                'path' => $gallery["path"],
-                'name' => $gallery["name"]
-            ];
+
+
+            $data = array( "Gallerie" => array() );
+
+            for($i=0; $i <= count($galleries); $i++){
+                $data[$i]["path"] = $galleries[$i]["path"];
+                $data[$i]["name"] = $galleries[$i]["name"];
             }
             $this->sendJson($data);
 
@@ -38,29 +37,32 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
 
             $data = [
                 'path' => Strings::firstUpper($path),
-                'name' => Strings::firstUpper($path)
+                'name' => Strings::firstUpper(str_replace("-"," ",$path))
             ];
 
-            //FileSystem::write($galleryFile, $data["path"], 0666);
-            FileSystem::createDir($path,0777);
+            FileSystem::write($galleryFile, $data["name"], 0666);
             $this->sendJson($data);
         }
 
 
-        if ($path){
+
 
         if($this->getHttpRequest()->isMethod('GET')){
             $gallery =FileSystem::read($galleryFile."/".$path);
-            $data = [
-                "path" => $gallery["path"],
-                "fullpath" => $gallery["fullpath"],
-                "name" => $gallery["name"],
-                "modified" => $gallery["createdAt"]
-            ];
+
+            $data = array( "Obrázky" => array() );
+
+            for($i=0; $i <= count($gallery); $i++){
+                $data[$i]["path"] = $gallery[$i]["path"];
+                $data[$i]["fullpath"] = $gallery[$i]["fullpath"];
+                $data[$i]["name"] = $gallery[$i]["name"];
+                $data[$i]["modified"] = $gallery[$i]["modified"];
+            }
             $this->sendJson($data);
         }
 
         elseif ($this->getHttpRequest()->isMethod('POST')){
+            $pathAllGallery = '/AllGalleries/'.$path; //cesta k obrazku
 
             if (file_exists($path)){
                 echo "Subor uz existuje";
@@ -68,12 +70,11 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
 
             $data = [
                 "path" => $path.".jpg",
-                "fullpath" => $pathAllGallery."/".$path.".jpg",
+                "fullpath" => $pathAllGallery.".jpg",
                 "name" => Strings::firstUpper($path),
                 "modified" => date("Y-m-d H:i:s")
             ];
 
-            FileSystem::write($path, $data["name"],0666);
             $image = Image::fromFile($data["fullpath"]);
             $image->save($data["path"]);
             $this->sendJson($data);
@@ -88,6 +89,5 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
                 echo "Subor neexistuje";
             }
            }
-    }
     }
 }
