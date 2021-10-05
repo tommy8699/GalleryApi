@@ -16,7 +16,7 @@ final class RouterFactory
 	{
 		$router = new RouteList;
 
-        $router->addRoute('<presenter>/', 'Homepage:default');
+        $router->addRoute('<presenter>/<path>/<action>', 'Homepage:default');
         $router->addRoute('<presenter>/<path>/', 'Gallery:default');
         $router->addRoute('<presenter>/<width>/<height>/<fullpath>', 'Images:default');
 		return $router;

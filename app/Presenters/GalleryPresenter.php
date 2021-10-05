@@ -19,33 +19,6 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
     {
         $dir = dirname(__DIR__ ,2);
         $galleryFile = $dir.'/www/AllGalleries'; //Cesta k vsetkym galleriam
-        if ($this->getHttpRequest()->isMethod('GET')){
-            $galleries = FileSystem::read($galleryFile);
-
-
-            $data = array( "Gallerie" => array() );
-
-            for($i=0; $i <= count($galleries); $i++){
-                $data[$i]["path"] = $galleries[$i]["path"];
-                $data[$i]["name"] = $galleries[$i]["name"];
-            }
-            $this->sendJson($data);
-
-        }
-
-        elseif ($this->getHttpRequest()->isMethod('POST')){
-
-            $data = [
-                'path' => Strings::firstUpper($path),
-                'name' => Strings::firstUpper(str_replace("-"," ",$path))
-            ];
-
-            FileSystem::write($galleryFile, $data["name"], 0666);
-            $this->sendJson($data);
-        }
-
-
-
 
         if($this->getHttpRequest()->isMethod('GET')){
             $gallery =FileSystem::read($galleryFile."/".$path);
