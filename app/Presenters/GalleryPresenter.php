@@ -20,16 +20,23 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
         $dir = dirname(__DIR__ ,2);
         $galleryFile = $dir.'/www/AllGalleries'; //Cesta k vsetkym galleriam
 
+
+
         if($this->getHttpRequest()->isMethod('GET')){
-            $gallery =FileSystem::read($galleryFile."/".$path);
+            $thisGallery =FileSystem::read($galleryFile."/".$path);
 
-            $data = array( "Obrázky" => array() );
+            $data = array( "Gallerie" => array(),"Obrázky" => array() );
 
-            for($i=0; $i <= count($gallery); $i++){
-                $data[$i]["path"] = $gallery[$i]["path"];
-                $data[$i]["fullpath"] = $gallery[$i]["fullpath"];
-                $data[$i]["name"] = $gallery[$i]["name"];
-                $data[$i]["modified"] = $gallery[$i]["modified"];
+
+                $data["Gallerie"]["path"] = $thisGallery["path"];  //path galerie
+                $data["Gallerie"]["name"] = $thisGallery["name"];  // name galerie
+
+            for($i=0; $i <= count($thisGallery); $i++){
+
+                $data["Obrázky"][$i]["path"] = $thisGallery[$i]["path"];
+                $data["Obrázky"][$i]["fullpath"] = $thisGallery[$i]["fullpath"];
+                $data["Obrázky"][$i]["name"] = $thisGallery[$i]["name"];
+                $data["Obrázky"][$i]["modified"] = $thisGallery[$i]["modified"];
             }
             $this->sendJson($data);
         }
