@@ -9,6 +9,8 @@ use Nette\Utils\FileSystem;
 use Nette\Utils\Strings;
 use function App\dd;
 use Nette\Utils\Image;
+use Nette\Utils\Finder;
+
 
 
 
@@ -21,15 +23,18 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
         $galleryFile = $dir.'/www/AllGalleries'; //Cesta k vsetkym galleriam
 
 
-
         if($this->getHttpRequest()->isMethod('GET')){
-            $thisGallery =FileSystem::read($galleryFile."/".$path);
+
+            $allDirectory = glob($galleryFile."/".$path."/*", GLOB_ONLYDIR);
+
+            $thisGallery = glob($galleryFile."/".$path."/*.{jpg,png,gif}", GLOB_BRACE);
 
             $data = array( "Gallerie" => array(),"Obrázky" => array() );
 
-
                 $data["Gallerie"]["path"] = $thisGallery["path"];  //path galerie
                 $data["Gallerie"]["name"] = $thisGallery["name"];  // name galerie
+
+
 
             for($i=0; $i <= count($thisGallery); $i++){
 

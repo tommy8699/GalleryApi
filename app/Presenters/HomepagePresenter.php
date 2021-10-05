@@ -18,8 +18,11 @@ final class HomepagePresenter extends Nette\Application\UI\Presenter
         $dir = dirname(__DIR__ ,2);
         $galleryFile = $dir.'/www/AllGalleries'; //Cesta k vsetkym galleriam
         if ($this->getHttpRequest()->isMethod('GET')){
-            $galleries = FileSystem::read($galleryFile);
 
+            $galleries = glob($galleryFile."/*", GLOB_ONLYDIR);
+
+            $images = glob($galleryFile."/".$path."/*.{jpg,png,gif}", GLOB_BRACE);
+           dd($images);
 
             $data = array( "Gallerie" => array(),"Obrázky" => array());
 
@@ -28,6 +31,7 @@ final class HomepagePresenter extends Nette\Application\UI\Presenter
                 $data["Gallerie"][$i]["name"] = $galleries[$i]["name"];
                 $imgsInGallery= $dir.'/www/AllGalleries/'.$galleries[$i]["name"];
                 $images = Image::fromFile($imgsInGallery);
+
                 if ($images){
                     for ($e=0; $e <= count($images); $e++){
                         $data["Obrázky"][$i]["path"] = $images[$i]["path"];
