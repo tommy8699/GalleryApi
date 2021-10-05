@@ -22,7 +22,7 @@ final class HomepagePresenter extends Nette\Application\UI\Presenter
             $galleries = glob($galleryFile."/*", GLOB_ONLYDIR);
 
             $images = glob($galleryFile."/".$path."/*.{jpg,png,gif}", GLOB_BRACE);
-           dd($images);
+           //dd($images);
 
             $data = array( "Gallerie" => array(),"Obrázky" => array());
 
