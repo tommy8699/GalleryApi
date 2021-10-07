@@ -16,26 +16,37 @@ final class ImagesPresenter extends Nette\Application\UI\Presenter
 
         $dir = dirname(__DIR__ ,2);
         $pathAllGallery = $dir.'/www/AllGalleries';
-        $thisGallery = $pathAllGallery."/".$fullPath;
         $image = glob($pathAllGallery."/*/".$fullPath.".{jpg,png,gif}", GLOB_BRACE);
 
         if (count($image) !== 0){
-            $thisImage = Image::fromFile($image[0]);
 
-        $thisImage->resize($width, $height);
+        $pathInfoDir = pathinfo($image[0], PATHINFO_DIRNAME);
+        $folderName = (basename($pathInfoDir));
+        $finfImg = basename($image[0]);
+
+        $thisImage = Image::fromFile('../www/AllGalleries/'.$folderName."/".$finfImg);
+
+        if($width !==  0 && $height !== 0){
+            $thisImage->resize($width, $height);
+        }
+        elseif ($width == 0 ){
+            $thisImage->resize(null, $height);
+        }
+        elseif($height == 0){
+            $thisImage->resize($width, null);
+        }
 
         if ($this->getHttpRequest()->isMethod('GET')){
                 $data = [
-                    'fullPath' => $thisGallery,
+                    'fullPath' => $folderName."/".$fullPath,
                     'width' => $thisImage->getWidth(),
                     'height' => $thisImage->getHeight()
                 ];
                 $this->sendJson($data);
         }
         }
-        else{
-            echo "Obrazok neexistuje";
+        else {
+            $this->template->image= $fullPath;
         }
     }
-
 }

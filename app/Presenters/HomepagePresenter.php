@@ -6,7 +6,7 @@ namespace App\Presenters;
 
 use Nette;
 use Nette\Utils\FileSystem;
-use Nette\Utils\Image;
+use Nette\Utils\Json;
 use Nette\Utils\Strings;
 use function App\dd;
 
@@ -14,46 +14,52 @@ use function App\dd;
 final class HomepagePresenter extends Nette\Application\UI\Presenter
 {
 
-    public static function actionDefault($path){
+    public function actionDefault(){
+
         $dir = dirname(__DIR__ ,2);
         $galleryFile = $dir.'/www/AllGalleries'; //Cesta k vsetkym galleriam
+        $galleries = glob($galleryFile."/*", GLOB_ONLYDIR);
+
         if ($this->getHttpRequest()->isMethod('GET')){
-
-            $galleries = glob($galleryFile."/*", GLOB_ONLYDIR);
-
-            $images = glob($galleryFile."/".$path."/*.{jpg,png,gif}", GLOB_BRACE);
-           //dd($images);
 
             $data = array( "Gallerie" => array(),"Obrázky" => array());
 
-            for($i=0; $i <= count($galleries); $i++){
-                $data["Gallerie"][$i]["path"] = $galleries[$i]["path"];
-                $data["Gallerie"][$i]["name"] = $galleries[$i]["name"];
-                $imgsInGallery= $dir.'/www/AllGalleries/'.$galleries[$i]["name"];
-                $images = Image::fromFile($imgsInGallery);
+            for ($i= 0;$i< count($galleries);$i++ ) {
+                $thisGalleryPath = basename($galleries[$i]);
 
-                if ($images){
-                    for ($e=0; $e <= count($images); $e++){
-                        $data["Obrázky"][$i]["path"] = $images[$i]["path"];
-                        $data["Obrázky"][$i]["fullpath"] = $images[$i]["fullpath"];
-                        $data["Obrázky"][$i]["name"] = $images[$i]["name"];
-                        $data["Obrázky"][$i]["modified"] = $images[$i]["modified"];
-                    }
+                $data["Gallerie"][$i]["path"] = $thisGalleryPath;
+                $data["Gallerie"][$i]["name"] = ucfirst($thisGalleryPath);
+
+                $thisGallery = glob($galleryFile . "/" . $thisGalleryPath . "/*.{jpg,png,gif}", GLOB_BRACE);
+
+            if ($thisGallery){
+                for ($e=0; $e < count($thisGallery); $e++){
+
+                    $thisPath = basename($thisGallery[$e]);
+                    $name= (ucfirst(basename($thisGallery[$e],".jpg")));
+                    $modified = date ("Y-m-d H:i:s.", filemtime($thisGallery[$e]));
+
+                    $data["Obrázky"][$e]["path"] = $thisPath;
+                    $data["Obrázky"][$e]["fullpath"] = $thisGalleryPath."/".$thisPath;
+                    $data["Obrázky"][$e]["name"] = $name;
+                    $data["Obrázky"][$e]["modified"] = $modified;
                 }
-        }
-
+            }
+            }
             $this->sendJson($data);
-
         }
 
         elseif ($this->getHttpRequest()->isMethod('POST')){
 
+            $json = $this->getHttpRequest()->getRawBody();
+            $datas= Json::decode($json, Json::FORCE_ARRAY);
+
             $data = [
-                'path' => Strings::firstUpper($path),
-                'name' => Strings::firstUpper(str_replace("-"," ",$path))
+                'path' => $datas["path"],
+                'name' => ucfirst($datas["name"])
             ];
 
-            FileSystem::write($galleryFile, $data["name"], 0666);
+            mkdir("../www/AllGalleries/".$data["name"], 0700);
             $this->sendJson($data);
         }
     }

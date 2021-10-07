@@ -9,9 +9,9 @@ Požiadavky
 Stiahnutie projektu pomocou git
 --------------------------------
 
-- Príkazom git clone si naclonujeme projekt do nášho zariadenia 
+- Príkazom git clone si naclonujeme projekt do nášho zariadenia  
 ```
-   git clone 
+   git clone https://github.com/tommy8699/GalleryApp.git GalleryApp
 ```
 - A následne zadáme príkaz git fetch, pre zistenie zmien na githube
  ```  

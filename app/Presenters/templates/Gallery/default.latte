@@ -1,2 +1,4 @@
 {block content}
-<a n:href=":Images:default">Obrazky</a>
+{if isset($gallery) }
+    <p>Galleria <strong>{$gallery}</strong> zial neexistuje</p>
+{/if}
