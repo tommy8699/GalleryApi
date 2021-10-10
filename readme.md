@@ -37,11 +37,15 @@ php -S localhost:8000 -t www
 ```
 - A následne môžeme prejsť na adresu:
      http://localhost:8000
+- Vytvaranie novej galerie spracuvavá Gallery presenter, kde uz pri vytvaraní obrázka vytvorí aj novú galeriu, po zadani cesty.
 
 Podstranky:
 -----------
 **Gallery**
 http://localhost:8000/gallery/nazovGalerie
+
+Alebo zadaním názvu obrázka pri Delete requeste - ak potrebujeme vymazat obrázok
+http://localhost:8000/gallery/nazovGalerie/images.jpg
 
 **Images**
 http://localhost:8000/images/width/height/názovObrazku

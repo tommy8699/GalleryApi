@@ -4,15 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Model;
 
-use http\Env\Request;
 use http\Exception\InvalidArgumentException;
 use Nette\Http\IRequest;
+use Nette\Http\IResponse;
 use Nette\SmartObject;
 use Nette\Utils\DateTime;
 use Nette\Utils\FileSystem;
 use Nette\Utils\Finder;
-use Nette\Utils\Image;
-use Nette\Utils\Json;
 use Nette\Utils\Strings;
 use SplFileInfo;
 use function App\dd;
@@ -23,6 +21,7 @@ class GalleriesManager
 
     /** @var string AllGalleries */
     private $allGalleriesPath;
+
     /**
      * @var IRequest
      */
@@ -86,7 +85,9 @@ class GalleriesManager
         if (!($image->isOk() && $image->hasFile() && $image->isImage())){
             throw new InvalidArgumentException("Zly format obrazka");
         }
-
+        if (file_exists($galleryName)){
+            $this->error("Galéria so zadaným názvom už existuje",IResponse::S409_CONFLICT);
+        }
         $path = $this->allGalleriesPath."/".$galleryName."/".$image->getSanitizedName();
         $image->move($path);
 
@@ -112,5 +113,6 @@ class GalleriesManager
         }
         return false;
     }
+
 
 }

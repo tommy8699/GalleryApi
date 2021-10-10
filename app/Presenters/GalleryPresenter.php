@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presenters;
 
-use mysql_xdevapi\Exception;
 use Nette;
-use Nette\Utils\FileSystem;
 use Tracy\Debugger;
 use function App\dd;
-use Nette\Utils\Image;
-use Nette\Http\FileUpload;
-use Nette\Utils\Json;
 use App\Model\GalleriesManager;
 
 
@@ -29,8 +24,7 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
     {
         $datas =  $this->galleriesManager->findAllGalleries($path);
         if (empty($datas)  ){
-            //$this->template->gallery = $path;
-            $this->error('Galleria '. $path.' zial neexistuje');
+            $this->error("Zvolená galéria neexistuje", Nette\Http\IResponse::S404_NOT_FOUND);
         }
         else{
             $this->sendJson($datas);
@@ -56,11 +50,11 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
             $this->sendJson([
                 "path" => $path,
                 "fullPath" => $path,
-                "message" => "Zmazanie prebehlo uspešne"
+                "message" => "Galéria/obrázok bola úspešne vymazaná"
             ]);
         }
         else{
-            $this->error("Galeria neexistuje" , Nette\Http\IResponse::S404_NOT_FOUND );
+            $this->error("Zvolená galéria/obrázok neexistuje" , Nette\Http\IResponse::S404_NOT_FOUND );
         }
     }
 }

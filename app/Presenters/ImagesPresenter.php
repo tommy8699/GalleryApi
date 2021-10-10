@@ -46,7 +46,7 @@ final class ImagesPresenter extends Nette\Application\UI\Presenter
         }
         }
         else {
-            $this->template->image= $fullPath;
+            $this->error("Obrázok sa nenašiel", Nette\Http\IResponse::S404_NOT_FOUND);
         }
     }
 }
