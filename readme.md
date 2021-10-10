@@ -9,7 +9,7 @@ Požiadavky
 Stiahnutie projektu pomocou git
 --------------------------------
 
-- Príkazom git clone si naclonujeme projekt do nášho zariadenia  
+- Príkazom git clone si naclonujeme (stiahneme) projekt do nášho zariadenia  
 ```
    git clone https://github.com/tommy8699/GalleryApp.git GalleryApp
 ```
