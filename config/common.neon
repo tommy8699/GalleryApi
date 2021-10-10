@@ -1,7 +1,6 @@
-parameters:
-
 
 application:
+	#catchExceptions: true
 	errorPresenter: Error
 	mapping:
 		*: App\*Module\Presenters\*Presenter
@@ -17,5 +16,9 @@ di:
 		tags: no
 
 
+parameters:
+	allGalleriesPath: %wwwDir%/AllGalleries
+
 services:
 	- App\Router\RouterFactory::createRouter
+	- App\Model\GalleriesManager(allGalleriesPath: %allGalleriesPath%)

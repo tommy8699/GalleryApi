@@ -24,7 +24,7 @@ final class Error4xxPresenter extends Nette\Application\UI\Presenter
             'status' => 'error',
             'data' => [
                 'code' => $exception->getCode(),
-                'message' => $exception->getMessage(), // Nezabudnut msg
+                'message' => $exception->getMessage(),
             ]
         ]);
     }

@@ -17,7 +17,8 @@ class Bootstrap
 	        die(1);
         }
 
-		$configurator = new Configurator;
+
+        $configurator = new Configurator;
 		$appDir = dirname(__DIR__);
 
 		//$configurator->setDebugMode('secret@23.75.345.200'); // enable for your remote IP

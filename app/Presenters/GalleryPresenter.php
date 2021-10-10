@@ -4,76 +4,63 @@ declare(strict_types=1);
 
 namespace App\Presenters;
 
+use mysql_xdevapi\Exception;
 use Nette;
 use Nette\Utils\FileSystem;
+use Tracy\Debugger;
 use function App\dd;
 use Nette\Utils\Image;
+use Nette\Http\FileUpload;
 use Nette\Utils\Json;
+use App\Model\GalleriesManager;
 
 
 final class GalleryPresenter extends Nette\Application\UI\Presenter
 {
+    /** @var GalleriesManager */
+    private $galleriesManager;
 
-    public function actionDefault($path): void
+    public function injectGalleriesManager(GalleriesManager $galleriesManager)
     {
-        $dir = dirname(__DIR__ ,2);
-        $galleryFile = $dir.'/www/AllGalleries';
+        $this->galleriesManager = $galleriesManager;
+    }
 
-
-        if($this->getHttpRequest()->isMethod('GET')){
-            $thisGallery = glob($galleryFile."/".$path, GLOB_ONLYDIR);
-            $allImg = glob($galleryFile."/".$path."/*.{jpg,png,gif}", GLOB_BRACE);
-
-            if (count($thisGallery)> 0){
-            $data = array( "Gallerie" => array(),"Obrázky" => array() );
-
-                $thisGalleryPath = basename($thisGallery[0]);
-
-                $data["Gallerie"]["path"] = $thisGalleryPath;
-                $data["Gallerie"]["name"] = ucfirst(str_replace("-"," ",$thisGalleryPath));
-
-
-            for($i=0; $i < count($allImg); $i++){
-                $thisPath = basename($allImg[$i]);
-                $name= (ucfirst(basename($allImg[$i],".jpg")));
-                $modified = date ("Y-m-d H:i:s.", filemtime($allImg[$i]));
-
-                $data["Obrázky"][$i]["path"] = $thisPath;
-                $data["Obrázky"][$i]["fullpath"] = $path."/".$thisPath;
-                $data["Obrázky"][$i]["name"] = $name;
-                $data["Obrázky"][$i]["modified"] = $modified;
-            }
-            $this->sendJson($data);
+    public function actionGet(string $path)
+    {
+        $datas =  $this->galleriesManager->findAllGalleries($path);
+        if (empty($datas)  ){
+            //$this->template->gallery = $path;
+            $this->error('Galleria '. $path.' zial neexistuje');
         }
-            else{
-                $this->template->gallery = $path;
-            }
+        else{
+            $this->sendJson($datas);
         }
+    }
 
-        elseif ($this->getHttpRequest()->isMethod('POST')){
-            $pathAllGallery = '/AllGalleries/'.$path;
-
-
-            $json = $this->getHttpRequest()->getRawBody();
-            $datas= Json::decode($json, Json::FORCE_ARRAY);
-
-            $data = [
-                "path" => $datas["path"],
-                "fullpath" => $datas["fullpath"],
-                "name" => $datas["name"],
-                "modified" => date("Y-m-d H:i:s")
-            ];
-
-            $type = Image::JPEG;
-            $image = Image::fromString($datas["path"],$type);
-            $image->save("../www/AllGalleries/".$path);
-
-            $this->sendJson($data);
+    public function actionInsert(string $path)
+    {
+        try {
+            $data = $this->galleriesManager->insertImage($path);
         }
+        catch (\Exception $exception){
+            Debugger::log($exception);
+            $this->error("Zly parameter obrazka", Nette\Http\IResponse::S422_UNPROCESSABLE_ENTITY);
+        }
+        $this->sendJson($data);
+    }
 
-        elseif ($this->getHttpRequest()->isMethod('DELETE') ){
-                $this->template->deleteGallery = $path;
-                FileSystem::delete("../www/AllGalleries/".$path);
-           }
+    public function actionDelete(string $path)
+    {
+        $this->template->deleteGallery = $path;
+        if ($this->galleriesManager->delete($path)){
+            $this->sendJson([
+                "path" => $path,
+                "fullPath" => $path,
+                "message" => "Zmazanie prebehlo uspešne"
+            ]);
+        }
+        else{
+            $this->error("Galeria neexistuje" , Nette\Http\IResponse::S404_NOT_FOUND );
+        }
     }
 }
