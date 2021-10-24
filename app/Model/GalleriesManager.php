@@ -42,11 +42,12 @@ class GalleriesManager
 
         foreach ($images as $imagePath => $imageInfo) {
             assert($imageInfo instanceof SplFileInfo);
+            $time = DateTime::from($imageInfo->getMTime());
             $retVal[] = [
                 'path' => $imageInfo->getFilename(),
-                'fullpath' => Strings::after($imagePath, $this->allGalleriesPath),
+                'fullpath' => Strings::after($imagePath, $this->allGalleriesPath."/"),
                 'name' => $imageInfo->getBasename('.' . $imageInfo->getExtension()),
-                'modified' => DateTime::from($imageInfo->getMTime()),		// prípadne pridat ->format()
+                'modified' =>$time->format("d.m.Y H:i:s"),		// prípadne pridat ->format()
             ];
         }
 
@@ -83,10 +84,10 @@ class GalleriesManager
 
                 $retVal[] = [
                     'Galeria' => [
-                        'path' => Strings::after($galleryPath, $this->allGalleriesPath),
+                        'path' => Strings::after($galleryPath, $this->allGalleriesPath."/"),
                         'name' => $galleryInfo->getBasename(),
                     ], ];
-                if ($findThisGallery !== "*" && $galleryInfo->getBasename() !== $findThisGallery ){
+                if ($findThisGallery != "*"){
                     $retVal[] = [
                     'Obrázky' => $this->findImagesInGallery($galleryPath),
                         ];
@@ -118,7 +119,7 @@ class GalleriesManager
         return  [
             "path" => $image->getSanitizedName(),
             "fullpath" => Strings::after($path, $this->allGalleriesPath),
-            "name" => Strings::before($image->getSanitizedName(),".". $image->getImageFileExtension(), -1),
+            "name" => Strings::before($image->getSanitizedName(), $image->getImageFileExtension(), -1),
             "modified" => date("Y-m-d H:i:s", filemtime($path))
         ];
     }

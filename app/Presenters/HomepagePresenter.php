@@ -24,8 +24,12 @@ final class HomepagePresenter extends Nette\Application\UI\Presenter
 
         if ($this->getHttpRequest()->isMethod('GET')){
 
-            $data = $this->galleriesManager->findAllGalleries();
-            $this->sendJson($data);
+            if ($data = $this->galleriesManager->findAllGalleries()) {
+                $this->sendJson($data);
+            }
+            else{
+                $this->error("Galeria neexistuje", Nette\Http\IResponse::S404_NOT_FOUND);
+            }
         }
 
         $this->error("Nepodporovaná metoda, pouzite GET", Nette\Http\IResponse::S405_METHOD_NOT_ALLOWED);
