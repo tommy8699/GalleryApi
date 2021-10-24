@@ -28,6 +28,9 @@ Inštalacia
  ```
   composer install 
  ```
+- V projekte si je potrebne vytvoriť  ``` local.neon ``` v adresári  ```config ```, ktorý vzhľadom nato že nemáme pripojenie k DB
+tak môže byť prázdny.  
+
 Web Server Setup
 ----------------
 

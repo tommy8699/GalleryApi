@@ -38,7 +38,7 @@ final class GalleryPresenter extends Nette\Application\UI\Presenter
         }
         catch (\Exception $exception){
             Debugger::log($exception);
-            $this->error("Zly parameter obrazka", Nette\Http\IResponse::S422_UNPROCESSABLE_ENTITY);
+            $this->error("Chybne zadaný request - nevhodný obsah podľa schémy.", Nette\Http\IResponse::S400_BAD_REQUEST);
         }
         $this->sendJson($data);
     }

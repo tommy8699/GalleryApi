@@ -53,6 +53,24 @@ class GalleriesManager
         return $retVal;
     }
 
+    private function findImagesForHomepage(string $galleryPath): array
+    {
+        $retVal = [];
+
+        $images = Finder::findFiles('*')
+            ->in($galleryPath);
+
+        foreach ($images as $imagePath => $imageInfo) {
+            assert($imageInfo instanceof SplFileInfo);
+            $retVal[] = [
+                'path' => Strings::before($imageInfo->getFilename(),"."),
+                'name' => $imageInfo->getBasename('.' . $imageInfo->getExtension()),
+            ];
+        }
+
+        return $retVal;
+    }
+
     public function findAllGalleries(string $findThisGallery = "*"): array
     {
         $galleries = Finder::findDirectories($findThisGallery)
@@ -63,17 +81,22 @@ class GalleriesManager
         foreach ($galleries as $galleryPath => $galleryInfo) {
             assert($galleryInfo instanceof SplFileInfo);
 
-            if ($findThisGallery !== "*" && $galleryInfo->getBasename() !== $findThisGallery ){
-                continue;
+                $retVal[] = [
+                    'Galeria' => [
+                        'path' => Strings::after($galleryPath, $this->allGalleriesPath),
+                        'name' => $galleryInfo->getBasename(),
+                    ], ];
+                if ($findThisGallery !== "*" && $galleryInfo->getBasename() !== $findThisGallery ){
+                    $retVal[] = [
+                    'Obrázky' => $this->findImagesInGallery($galleryPath),
+                        ];
+            }
+                else{
+                    $retVal[] = [
+                    'Obrázky' => $this->findImagesForHomepage($galleryPath),
+                        ];
             }
 
-            $retVal[] = [
-                'Galeria' => [
-                    'path' => Strings::after($galleryPath, $this->allGalleriesPath),
-                    'name' => $galleryInfo->getBasename(),
-                ],
-                'Obrázky' => $this->findImagesInGallery($galleryPath),
-            ];
         }
 
         return $retVal;
@@ -85,9 +108,10 @@ class GalleriesManager
         if (!($image->isOk() && $image->hasFile() && $image->isImage())){
             throw new InvalidArgumentException("Zly format obrazka");
         }
-        if (file_exists($galleryName)){
-            $this->error("Galéria so zadaným názvom už existuje",IResponse::S409_CONFLICT);
+        if (!(file_exists($galleryName))){
+            $this->error("Galéria pre upload sa nenašla",IResponse::S404_NOT_FOUND);
         }
+
         $path = $this->allGalleriesPath."/".$galleryName."/".$image->getSanitizedName();
         $image->move($path);
 

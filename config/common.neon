@@ -1,6 +1,6 @@
 
 application:
-	#catchExceptions: true
+	catchExceptions: true   #Pre testovacie ucely
 	errorPresenter: Error
 	mapping:
 		*: App\*Module\Presenters\*Presenter
